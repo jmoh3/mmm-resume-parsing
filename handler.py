@@ -4,7 +4,6 @@ from tika import parser
 import io
 import re
 
-
 def find_keywords(resume_string):
     with open('keywords.txt', 'r') as f:
         keywords = f.readlines()
@@ -14,7 +13,6 @@ def find_keywords(resume_string):
         if word in resume_string:
             found.append(word)
     return found
-
 
 def get_keyword_dict():
     lines = []
@@ -56,18 +54,18 @@ def parse_resume(event, context):
     resume_keywords = find_keywords(resume_text)
     keyword_weights = get_keyword_dict()
 
-    relevant_keywords = set()
+    relevant_keywords = {}
 
     for user_interest in resume_keywords:
         for event_tag in keyword_weights.keys():  # instead of using the keywords from from
             try:
                 weight = keyword_weights[event_tag][user_interest]
-                if weight > 0.5:
-                    relevant_keywords.add(event_tag)
+                if event_tag not in relevant_keywords.keys():
+                    relevant_keywords[event_tag] = weight
+                elif weight > relevant_keywords[event_tag]:
+                    relevant_keywords[event_tag] = weight
             except:
                 continue
-
-    relevant_keywords = list(relevant_keywords)
 
     body = {
         "message": "Go Serverless v1.0! Your function executed successfully!",

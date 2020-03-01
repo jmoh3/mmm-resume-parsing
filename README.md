@@ -23,7 +23,7 @@ Serverless: Checking Stack update progress...
 Serverless: Stack update finished...
 
 Service Information
-service: aws-python-simple-http-endpoint
+service: resume-api
 stage: dev
 region: us-east-1
 api keys:
