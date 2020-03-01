@@ -3,7 +3,7 @@ Uses resume data to match students to topics that are most relevant for them, cr
 
 ## API
 
-### /keywords
+### /
 
 #### POST
 
