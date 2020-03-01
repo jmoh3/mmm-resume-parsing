@@ -1,6 +1,29 @@
 # mmm-resume-parsing
 Uses resume data to match students to topics that are most relevant for them, created for [ACM Member-to-Meeting Matcher (MMM)](https://github.com/acm-uiuc/mmm).
 
+## API
+
+### /keywords
+
+#### POST
+
+```json
+{
+  "body": {
+    "email": {
+        "type": "string",
+        "required": true
+    },
+    "resume": {
+        "type": "string",
+        "required": true
+    }
+  }
+}
+```
+
+The resume provided should be a PDF encoded as a Base64 string.
+
 ## Deploy
 
 Before deploying, you'll need to set up an AWS account and credentials.
