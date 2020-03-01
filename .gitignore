@@ -3,3 +3,4 @@
 *.pyo
 node_modules/
 __pycache__/
+envv/

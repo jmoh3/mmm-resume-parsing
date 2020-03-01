@@ -3,6 +3,7 @@ from base64 import b64decode
 from tika import parser
 import io
 import re
+import requests
 
 def find_keywords(resume_string):
     with open('keywords.txt', 'r') as f:
@@ -36,6 +37,20 @@ def get_resume_text(b64_resume):
     resume_text = parser.from_file(resume_bytes_IO)['content']
     return resume_text
 
+def create_user_topics_body(email, relevant_keywords):
+    keywords_list = []
+
+    for keyword in relevant_keywords:
+        keywords_list.append({
+            "name" : keyword,
+            "weight" : relevant_keywords[keyword]
+        })
+    
+    return {
+        "email": email,
+        "topics": keywords_list
+        }
+
 def parse_resume(event, context):
     data = json.loads(event['body'])
 
@@ -47,7 +62,13 @@ def parse_resume(event, context):
         }
         response = {
             "statusCode": 400,
-            "body": json.dumps(body)
+            "body": json.dumps(body),
+            "headers": {
+                'Access-Control-Allow-Credentials': 'true',
+                'Access-Control-Allow-Headers': 'Authorization, Content-Type',
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Methods': ['POST', 'OPTIONS']
+            }
         }
         return response
 
@@ -66,14 +87,31 @@ def parse_resume(event, context):
                     relevant_keywords[event_tag] = weight
             except:
                 continue
+    
+    user_topics_body = create_user_topics_body(data['email'], relevant_keywords)
+
+    user_topics_headers = {
+        "Authorization" : "Bearer ChristmasTree4AllSeasons"
+    }
+
+    user_topics_response = requests.post('http://192.168.0.115:3000/dev/service/updatemember',
+                                            json=user_topics_body,
+                                            headers=user_topics_headers)
 
     body = {
         "message": "Go Serverless v1.0! Your function executed successfully!",
-        "relevant_event_tags": relevant_keywords
+        "user_email": data['email'],
+        "user_post_status" : user_topics_response.status_code
     }
     response = {
         "statusCode": 200,
-        "body": json.dumps(body)
+        "body": json.dumps(body),
+        "headers": {
+                'Access-Control-Allow-Credentials': 'true',
+                'Access-Control-Allow-Headers': 'Authorization, Content-Type',
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Methods': ['POST', 'OPTIONS']
+            }
     }
 
     return response
