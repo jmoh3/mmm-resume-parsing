@@ -42,7 +42,7 @@ def create_user_topics_body(email, relevant_keywords):
 
     for keyword in relevant_keywords:
         keywords_list.append({
-            "name" : keyword,
+            "_id" : keyword,
             "weight" : relevant_keywords[keyword]
         })
     
@@ -53,7 +53,6 @@ def create_user_topics_body(email, relevant_keywords):
 
 def parse_resume(event, context):
     data = json.loads(event['body'])
-
     try:
         resume_text = get_resume_text(data['resume'])
     except:
@@ -64,14 +63,10 @@ def parse_resume(event, context):
             "statusCode": 400,
             "body": json.dumps(body),
             "headers": {
-                'Access-Control-Allow-Credentials': 'true',
-                'Access-Control-Allow-Headers': 'Authorization, Content-Type',
-                'Access-Control-Allow-Origin': '*',
-                'Access-Control-Allow-Methods': ['POST', 'OPTIONS']
+                'Access-Control-Allow-Origin': '*'
             }
         }
         return response
-
     resume_keywords = find_keywords(resume_text)
     keyword_weights = get_keyword_dict()
 
@@ -94,7 +89,7 @@ def parse_resume(event, context):
         "Authorization" : "Bearer ChristmasTree4AllSeasons"
     }
 
-    user_topics_response = requests.post('http://192.168.0.115:3000/dev/service/updatemember',
+    user_topics_response = requests.post('https://89gebvx4j9.execute-api.us-east-1.amazonaws.com/dev/service/updatemember',
                                             json=user_topics_body,
                                             headers=user_topics_headers)
 
@@ -107,10 +102,7 @@ def parse_resume(event, context):
         "statusCode": 200,
         "body": json.dumps(body),
         "headers": {
-                'Access-Control-Allow-Credentials': 'true',
-                'Access-Control-Allow-Headers': 'Authorization, Content-Type',
-                'Access-Control-Allow-Origin': '*',
-                'Access-Control-Allow-Methods': ['POST', 'OPTIONS']
+                'Access-Control-Allow-Origin': '*'
             }
     }
 
