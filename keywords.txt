@@ -435,3 +435,6 @@ process
 excel
 exception handling
 sql
+open source
+nlp
+natural language processing

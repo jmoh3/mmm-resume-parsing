@@ -67,13 +67,14 @@ def parse_resume(event, context):
             }
         }
         return response
-    resume_keywords = find_keywords(resume_text)
+    
+    resume_keywords = find_keywords(resume_text.lower())
     keyword_weights = get_keyword_dict()
 
     relevant_keywords = {}
 
     for user_interest in resume_keywords:
-        for event_tag in keyword_weights.keys():  # instead of using the keywords from from
+        for event_tag in keyword_weights.keys():
             try:
                 weight = keyword_weights[event_tag][user_interest]
                 if event_tag not in relevant_keywords.keys():
@@ -89,15 +90,17 @@ def parse_resume(event, context):
         "Authorization" : "Bearer ChristmasTree4AllSeasons"
     }
 
-    user_topics_response = requests.post('https://89gebvx4j9.execute-api.us-east-1.amazonaws.com/dev/service/updatemember',
+    user_topics_response = requests.post('https://4z5904nohk.execute-api.us-east-1.amazonaws.com/dev/service/updatemember',
                                             json=user_topics_body,
                                             headers=user_topics_headers)
 
     body = {
-        "message": "Go Serverless v1.0! Your function executed successfully!",
+        "message": "Your information was uploaded successfully!",
         "user_email": data['email'],
+        "matched_keywords" : relevant_keywords,
         "user_post_status" : user_topics_response.status_code
     }
+    
     response = {
         "statusCode": 200,
         "body": json.dumps(body),
